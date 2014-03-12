@@ -1,0 +1,42 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+
+my $thumb_path = 'thumbs';
+my $dimensions = '100x100';
+
+sub usage {
+    print <<__USAGE;
+Usage: $0 [[thumb-path] dimensions]
+
+    thumb_path - where generated thumbnails go (default: thumbs)
+    dimensions - size of generated thumbnails expressed as WxH (default: 100x100)
+
+__USAGE
+}
+
+
+if ($#ARGV == 0) {
+    $dimensions = $ARGV[0];
+} elsif ($#ARGV >= 1) {
+    $thumb_path = $ARGV[0];
+    $dimensions = $ARGV[1];
+}
+
+if ($dimensions !~ m/^\d+x\d+$/) {
+    usage();
+    exit(0);
+}
+
+
+if (! -d $thumb_path) {
+    `mkdir $thumb_path`;
+}
+
+if (! -d $thumb_path) {
+    die "Couldn't find or create thumbpath";
+}
+
+my $cmd = "mogrify -path $thumb_path -thumbnail $dimensions^ -gravity center -extent $dimensions *.jpg";
+
+`$cmd`;
